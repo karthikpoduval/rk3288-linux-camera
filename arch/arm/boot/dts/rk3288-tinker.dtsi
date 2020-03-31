@@ -107,6 +107,13 @@
 		startup-delay-us = <100000>;
 		vin-supply = <&vcc_io>;
 	};
+
+	ext_cam_clk: external-camera-clock {
+		compatible = "fixed-clock";
+		clock-frequency = <25000000>;
+		clock-output-names = "CLK_CAMERA_25MHZ";
+		#clock-cells = <0>;
+	};
 };
 
 &cpu0 {
@@ -345,9 +352,39 @@
 
 &i2c2 {
 	status = "okay";
+	camera0: ov5647@36 {
+		compatible = "ovti,ov5647";
+		reg = <0x36>;
+		clocks = <&ext_cam_clk>;
+		status = "okay";
+		enable-gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
+		port {
+			ov5647_out: endpoint {
+				remote-endpoint = <&isp_mipi_in>;
+				data-lanes = <1 2>;
+			};
+		};
+	};
 };
 
 &i2c5 {
+	status = "okay";
+};
+
+&isp {
+	status = "okay";
+	phys = <&mipi_phy_rx0>;
+	phy-names = "dphy";
+
+	port {
+		isp_mipi_in: endpoint {
+			remote-endpoint = <&ov5647_out>;
+			data-lanes = <1 2>;
+		};
+	};
+};
+
+&mipi_phy_rx0 {
 	status = "okay";
 };
 
