@@ -16,6 +16,7 @@ description: |
 properties:
   compatible:
     const: rockchip,rk3399-cif-isp
+    const: rockchip,rk3288-rkisp1
 
   reg:
     maxItems: 1
